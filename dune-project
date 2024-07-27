@@ -17,7 +17,7 @@
 
 (package
  (name zeus)
- (synopsis "A functional limit orderbook (LOB) implementation in OCaml")
+ (synopsis "A functional limit order book (LOB) implementation in OCaml")
  (depends
   (ocaml
    (>= 5.2.0))
