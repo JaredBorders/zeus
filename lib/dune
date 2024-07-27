@@ -1,0 +1,7 @@
+(library
+ (public_name zeus)
+ (inline_tests)
+ (name zeus)
+ (libraries core)
+ (preprocess
+  (pps ppx_jane)))
