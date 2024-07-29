@@ -1,6 +1,6 @@
 (library
  (name test)
  (inline_tests)
- (libraries zeus core)
+ (libraries zeus)
  (preprocess
   (pps ppx_jane)))
