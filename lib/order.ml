@@ -1,14 +1,12 @@
 module Order = struct
   type kind =
-    | GoodTillCancel
-    | FillAndKill
-    | FillOrKill
-    | GoodForDay
     | Market
+    | Limit
+    | Stop
 
   type side =
-    | Buy
-    | Sell
+    | Bid
+    | Ask
 
   type t =
     { id : int
@@ -19,21 +17,5 @@ module Order = struct
     }
 
   let create id kind side price quantity = { id; kind; side; price; quantity }
-
-  let string_of_order t =
-    Printf.sprintf
-      "Order %d: %s %s %f %d"
-      t.id
-      (match t.kind with
-       | GoodTillCancel -> "GoodTillCancel"
-       | FillAndKill -> "FillAndKill"
-       | FillOrKill -> "FillOrKill"
-       | GoodForDay -> "GoodForDay"
-       | Market -> "Market")
-      (match t.side with
-       | Buy -> "Buy"
-       | Sell -> "Sell")
-      t.price
-      t.quantity
-  ;;
+  let modify t kind side price quantity = { t with kind; side; price; quantity }
 end
