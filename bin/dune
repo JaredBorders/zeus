@@ -1,6 +1,4 @@
 (executable
  (public_name zeus)
  (name main)
- (libraries zeus core)
- (preprocess
-  (pps ppx_jane)))
+ (libraries zeus))
