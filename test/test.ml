@@ -74,26 +74,22 @@ end
 
 module LevelTests = struct
   let%test "level create" =
-    let level = Level.create 100.0 Bid in
-    level.price = 100.0
-    && level.side = Bid
-    && level.quantity = 0
-    && Level.OrderMap.is_empty level.orders
+    let level = Level.create 100.0 in
+    level.price = 100.0 && level.quantity = 0 && Level.OrderMap.is_empty level.orders
   ;;
 
   let%test "level add order" =
-    let level = Level.create 99.99 Bid in
+    let level = Level.create 99.99 in
     let order = Order.create 1 Limit Bid 99.99 100 in
     let level' = Level.add order level in
     level'.price = 99.99
-    && level'.side = Bid
     && level'.quantity = 100
     && Level.OrderMap.cardinal level'.orders = 1
     && Level.OrderMap.find 1 level'.orders = order
   ;;
 
   let%test "level add orders" =
-    let level = Level.create 99.99 Bid in
+    let level = Level.create 99.99 in
     let orders =
       [ Order.create 1 Limit Bid 99.99 100
       ; Order.create 2 Limit Bid 99.99 80
@@ -102,7 +98,6 @@ module LevelTests = struct
     in
     let level' = List.fold_left (fun acc order -> Level.add order acc) level orders in
     level'.price = 99.99
-    && level'.side = Bid
     && level'.quantity = 200
     && Level.OrderMap.cardinal level'.orders = 3
     && Level.OrderMap.find 1 level'.orders = List.nth orders 0
@@ -110,19 +105,8 @@ module LevelTests = struct
     && Level.OrderMap.find 3 level'.orders = List.nth orders 2
   ;;
 
-  let%test "level add order wrong side" =
-    let level = Level.create 99.99 Bid in
-    let order = Order.create 1 Limit Ask 99.99 100 in
-    try
-      let _ = Level.add order level in
-      false
-    with
-    | Level.Wrong_side -> true
-    | _ -> false
-  ;;
-
   let%test "level add order wrong price" =
-    let level = Level.create 99.99 Bid in
+    let level = Level.create 99.99 in
     let order = Order.create 1 Limit Bid 100.0 100 in
     try
       let _ = Level.add order level in
@@ -133,7 +117,7 @@ module LevelTests = struct
   ;;
 
   let%test "level remove order" =
-    let level = Level.create 99.99 Bid in
+    let level = Level.create 99.99 in
     let orders =
       [ Order.create 1 Limit Bid 99.99 100
       ; Order.create 2 Limit Bid 99.99 80
@@ -143,7 +127,6 @@ module LevelTests = struct
     let level' = List.fold_left (fun acc order -> Level.add order acc) level orders in
     let level'' = Level.remove 2 level' in
     level''.price = 99.99
-    && level''.side = Bid
     && level''.quantity = 120
     && Level.OrderMap.cardinal level''.orders = 2
     && Level.OrderMap.find 1 level''.orders = List.nth orders 0
@@ -151,7 +134,7 @@ module LevelTests = struct
   ;;
 
   let%test "level remove orders" =
-    let level = Level.create 99.99 Bid in
+    let level = Level.create 99.99 in
     let orders =
       [ Order.create 1 Limit Bid 99.99 100
       ; Order.create 2 Limit Bid 99.99 80
@@ -162,14 +145,13 @@ module LevelTests = struct
     let level'' = Level.remove 2 level' in
     let level''' = Level.remove 1 level'' in
     level'''.price = 99.99
-    && level'''.side = Bid
     && level'''.quantity = 20
     && Level.OrderMap.cardinal level'''.orders = 1
     && Level.OrderMap.find 3 level'''.orders = List.nth orders 2
   ;;
 
   let%test "level remove all orders" =
-    let level = Level.create 99.99 Bid in
+    let level = Level.create 99.99 in
     let orders =
       [ Order.create 1 Limit Bid 99.99 100
       ; Order.create 2 Limit Bid 99.99 80
@@ -181,13 +163,12 @@ module LevelTests = struct
     let level''' = Level.remove 1 level'' in
     let level'''' = Level.remove 3 level''' in
     level''''.price = 99.99
-    && level''''.side = Bid
     && level''''.quantity = 0
     && Level.OrderMap.is_empty level''''.orders
   ;;
 
   let%test "level remove absent order" =
-    let level = Level.create 99.99 Bid in
+    let level = Level.create 99.99 in
     try
       let _ = Level.remove 1 level in
       false

@@ -103,7 +103,6 @@ module Json = struct
   let level_of_yojson = function
     | `Assoc fields ->
       { Level.price = float_of_yojson (assoc_field "price" fields)
-      ; side = side_of_yojson (assoc_field "side" fields)
       ; quantity = int_of_yojson (assoc_field "quantity" fields)
       ; orders = orders_of_yojson (assoc_field "orders" fields)
       }
@@ -113,7 +112,6 @@ module Json = struct
   let yojson_of_level (t : Level.t) =
     `Assoc
       [ "price", `Float t.price
-      ; "side", yojson_of_side t.side
       ; "quantity", `Int t.quantity
       ; "orders", orders_to_yojson t.orders
       ]
