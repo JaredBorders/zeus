@@ -19,6 +19,46 @@ module OrderTests = struct
     && order.price = 100.0
     && order.quantity = 100
   ;;
+
+  let%test "order modify" =
+    let order = Order.create 1 Limit Bid 100.0 100 in
+    let order' = Order.modify order Market 99.99 50 in
+    order'.id = 1
+    && order'.kind = Market
+    && order'.side = Bid
+    && order'.price = 99.99
+    && order'.quantity = 50
+  ;;
+
+  let%test "order fill partial" =
+    let order = Order.create 1 Limit Bid 100.0 100 in
+    let order' = Order.fill order 50 in
+    order'.id = 1
+    && order'.kind = Limit
+    && order'.side = Bid
+    && order'.price = 100.0
+    && order'.quantity = 50
+  ;;
+
+  let%test "order fill full" =
+    let order = Order.create 1 Limit Bid 100.0 100 in
+    let order' = Order.fill order 100 in
+    order'.id = 1
+    && order'.kind = Limit
+    && order'.side = Bid
+    && order'.price = 100.0
+    && order'.quantity = 0
+  ;;
+
+  let%test "order filled false" =
+    let order = Order.create 1 Limit Bid 100.0 100 in
+    Order.filled order = false
+  ;;
+
+  let%test "order filled true" =
+    let order = Order.create 1 Limit Bid 100.0 0 in
+    Order.filled order = true
+  ;;
 end
 
 module LevelTests = struct
