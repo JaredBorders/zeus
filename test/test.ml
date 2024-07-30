@@ -1,5 +1,6 @@
 open Zeus.Order
 open Zeus.Level
+open Zeus.Trade
 
 module OrderTests = struct
   let%test "order create bid" =
@@ -116,7 +117,7 @@ module LevelTests = struct
       let _ = Level.add order level in
       false
     with
-    | Level.WrongSide -> true
+    | Level.Wrong_side -> true
     | _ -> false
   ;;
 
@@ -127,7 +128,7 @@ module LevelTests = struct
       let _ = Level.add order level in
       false
     with
-    | Level.WrongPrice -> true
+    | Level.Wrong_price -> true
     | _ -> false
   ;;
 
@@ -191,7 +192,38 @@ module LevelTests = struct
       let _ = Level.remove 1 level in
       false
     with
-    | Level.AbsentOrder 1 -> true
+    | Level.Absent_order 1 -> true
+    | _ -> false
+  ;;
+end
+
+module TradeTests = struct
+  let%test "trade create" =
+    let bid = Order.create 1 Limit Bid 100.0 100 in
+    let ask = Order.create 2 Limit Ask 100.0 100 in
+    let trade = Trade.create bid ask in
+    trade.bid = bid && trade.ask = ask
+  ;;
+
+  let%test "trade create invalid bid" =
+    let bid = Order.create 1 Limit Ask 100.0 100 in
+    let ask = Order.create 2 Limit Ask 100.0 100 in
+    try
+      let _ = Trade.create bid ask in
+      false
+    with
+    | Trade.Invalid_bid -> true
+    | _ -> false
+  ;;
+
+  let%test "trade create invalid ask" =
+    let bid = Order.create 1 Limit Bid 100.0 100 in
+    let ask = Order.create 2 Limit Bid 100.0 100 in
+    try
+      let _ = Trade.create bid ask in
+      false
+    with
+    | Trade.Invalid_ask -> true
     | _ -> false
   ;;
 end
