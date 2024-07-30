@@ -1,9 +1,9 @@
 open Order
 
 module Level = struct
-  exception WrongSide
-  exception WrongPrice
-  exception AbsentOrder of int
+  exception Wrong_side
+  exception Wrong_price
+  exception Absent_order of int
 
   module OrderMap = Map.Make (Int)
 
@@ -19,8 +19,8 @@ module Level = struct
   ;;
 
   let add (order : Order.t) level =
-    if order.Order.side <> level.side then raise WrongSide;
-    if order.Order.price <> level.price then raise WrongPrice;
+    if order.Order.side <> level.side then raise Wrong_side;
+    if order.Order.price <> level.price then raise Wrong_price;
     let orders = OrderMap.add order.Order.id order level.orders in
     let quantity = level.quantity + order.Order.quantity in
     { level with quantity; orders }
@@ -29,7 +29,7 @@ module Level = struct
   let remove id level =
     let order =
       try OrderMap.find id level.orders with
-      | Not_found -> raise (AbsentOrder id)
+      | Not_found -> raise (Absent_order id)
     in
     let orders = OrderMap.remove id level.orders in
     let quantity = level.quantity - order.Order.quantity in
