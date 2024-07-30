@@ -1,12 +1,12 @@
 .PHONY: build run test fmt clean
 
-build:
+build: fmt
 	dune build
 
-run:
+run: fmt
 	dune exec bin/main.exe
 
-test:
+test: fmt
 	dune test
 
 fmt:
