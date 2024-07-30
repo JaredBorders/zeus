@@ -50,6 +50,16 @@ module OrderTests = struct
     && order'.quantity = 0
   ;;
 
+  let%test "order fill excess" =
+    let order = Order.create 1 Limit Bid 100.0 100 in
+    try
+      let _ = Order.fill order 101 in
+      false
+    with
+    | Order.Invalid_quantity -> true
+    | _ -> false
+  ;;
+
   let%test "order filled false" =
     let order = Order.create 1 Limit Bid 100.0 100 in
     Order.filled order = false
