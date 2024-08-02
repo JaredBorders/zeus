@@ -59,7 +59,8 @@ module Json = struct
       ; kind = kind_of_yojson (assoc_field "kind" fields)
       ; side = side_of_yojson (assoc_field "side" fields)
       ; price = float_of_yojson (assoc_field "price" fields)
-      ; quantity = int_of_yojson (assoc_field "quantity" fields)
+      ; quantity =
+          int_of_yojson (assoc_field "quantity" fields)
       }
     | _ -> raise InvalidOrderJson
   ;;
@@ -74,7 +75,9 @@ module Json = struct
       ]
   ;;
 
-  let json_of_order (t : Order.t) = Yojson.Safe.pretty_to_string (yojson_of_order t)
+  let json_of_order (t : Order.t) =
+    Yojson.Safe.pretty_to_string (yojson_of_order t)
+  ;;
 
   module OrderMap = Map.Make (Int)
 
@@ -83,7 +86,9 @@ module Json = struct
     | _ -> raise InvalidOrderPairJson
   ;;
 
-  let order_pair_to_yojson (k, v) = `List [ `Int k; yojson_of_order v ]
+  let order_pair_to_yojson (k, v) =
+    `List [ `Int k; yojson_of_order v ]
+  ;;
 
   let orders_of_yojson = function
     | `List lst ->
@@ -97,14 +102,21 @@ module Json = struct
   ;;
 
   let orders_to_yojson orders =
-    `List (OrderMap.fold (fun k v acc -> order_pair_to_yojson (k, v) :: acc) orders [])
+    `List
+      (OrderMap.fold
+         (fun k v acc -> order_pair_to_yojson (k, v) :: acc)
+         orders
+         [])
   ;;
 
   let level_of_yojson = function
     | `Assoc fields ->
-      { Level.price = float_of_yojson (assoc_field "price" fields)
-      ; quantity = int_of_yojson (assoc_field "quantity" fields)
-      ; orders = orders_of_yojson (assoc_field "orders" fields)
+      { Level.price =
+          float_of_yojson (assoc_field "price" fields)
+      ; quantity =
+          int_of_yojson (assoc_field "quantity" fields)
+      ; orders =
+          orders_of_yojson (assoc_field "orders" fields)
       }
     | _ -> raise InvalidLevelJson
   ;;
@@ -117,5 +129,7 @@ module Json = struct
       ]
   ;;
 
-  let json_of_level (t : Level.t) = Yojson.Safe.pretty_to_string (yojson_of_level t)
+  let json_of_level (t : Level.t) =
+    Yojson.Safe.pretty_to_string (yojson_of_level t)
+  ;;
 end

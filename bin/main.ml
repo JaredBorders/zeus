@@ -10,11 +10,15 @@ let orders =
 ;;
 
 let level =
-  List.fold_left (fun acc order -> Level.add order acc) (Level.create 99.99 Bid) orders
+  List.fold_left
+    (fun acc order -> Level.add order acc)
+    (Level.create 99.99)
+    orders
 ;;
 
 let () =
-  print_endline "\n<><> zeus.0.0.1 ><><><><><><><><><><><><><><><><>\n";
+  print_endline
+    "\n<><> zeus.0.0.1 ><><><><><><><><><><><><><><><><>\n";
   print_endline (Json.json_of_level level);
   print_endline "\n"
 ;;
