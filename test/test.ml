@@ -56,14 +56,43 @@ module LevelTests = struct
   let%test "level create" =
     let level = Level.create 100 in
     level.price = 100
+    && level.quantity = 0
+    && Level.bids level = []
+    && Level.asks level = []
   ;;
 
-  let%test "level add order" = true
-  let%test "level add orders" = true
-  let%test "level add order wrong side" = true
-  let%test "level add order wrong price" = true
-  let%test "level remove order" = true
-  let%test "level remove orders" = true
-  let%test "level remove all orders" = true
-  let%test "level remove absent order" = true
+  let%test "level add order" =
+    let level = Level.create 100 in
+    let order = Order.create 1 Market Bid 100 100 in
+    let level' = Level.add level order in
+    level'.quantity = 100
+    && Level.bids level' = [ 1, order ]
+  ;;
+
+  let%test "level add order wrong price" =
+    let level = Level.create 100 in
+    let order = Order.create 1 Market Bid 200 100 in
+    try
+      let _ = Level.add level order in
+      false
+    with
+    | Level.Wrong_price -> true
+  ;;
+
+  let%test "level remove order" =
+    let level = Level.create 100 in
+    let order = Order.create 1 Market Bid 100 100 in
+    let level' = Level.add level order in
+    let level'' = Level.remove level' 1 in
+    level''.quantity = 0 && Level.bids level'' = []
+  ;;
+
+  let%test "level remove order absent" =
+    let level = Level.create 100 in
+    try
+      let _ = Level.remove level 1 in
+      false
+    with
+    | Level.Absent_order _ -> true
+  ;;
 end
