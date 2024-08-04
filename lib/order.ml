@@ -1,21 +1,18 @@
+open Id
+open Kind
+open Side
+open Price
+open Quantity
+
 module Order = struct
   exception Invalid_quantity
 
-  type kind =
-    | Market
-    | Limit
-    | Stop
-
-  type side =
-    | Bid
-    | Ask
-
   type t =
-    { id : int
-    ; kind : kind
-    ; side : side
-    ; price : float
-    ; quantity : int
+    { id : Id.t
+    ; kind : Kind.t
+    ; side : Side.t
+    ; price : Price.t
+    ; quantity : Quantity.t
     }
 
   let create id kind side price quantity =

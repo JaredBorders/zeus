@@ -1,4 +1,4 @@
 (executable
  (public_name zeus)
  (name main)
- (libraries zeus))
+ (libraries zeus core))

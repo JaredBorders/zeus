@@ -1,135 +1,57 @@
+open Kind
+open Side
 open Order
-open Level
 
 module Json = struct
-  exception InvalidKindJson
-  exception InvalidSideJson
-  exception InvalidOrderIdJson
-  exception InvalidOrderPriceJson
-  exception InvalidOrderQuantityJson
-  exception InvalidOrderJson
-  exception InvalidLevelPriceJson
-  exception InvalidLevelQuantityJson
-  exception InvalidLevelJson
-  exception InvalidOrderPairJson
-  exception InvalidOrderMapJson
+  exception Invalid_kind
+  exception Invalid_side
+  exception Invalid_order
 
-  let kind_of_yojson = function
-    | `String "Market" -> Order.Market
-    | `String "Limit" -> Order.Limit
-    | `String "Stop" -> Order.Stop
-    | _ -> raise InvalidKindJson
+  let kind_to_json = function
+    | Kind.Market -> `String "Market"
+    | Kind.Limit -> `String "Limit"
+    | Kind.Stop -> `String "Stop"
   ;;
 
-  let yojson_of_kind = function
-    | Order.Market -> `String "Market"
-    | Order.Limit -> `String "Limit"
-    | Order.Stop -> `String "Stop"
+  let kind_of_json = function
+    | `String "Market" -> Kind.Market
+    | `String "Limit" -> Kind.Limit
+    | `String "Stop" -> Kind.Stop
+    | _ -> raise Invalid_kind
   ;;
 
-  let side_of_yojson = function
-    | `String "Bid" -> Order.Bid
-    | `String "Ask" -> Order.Ask
-    | _ -> raise InvalidSideJson
+  let side_to_json = function
+    | Side.Bid -> `String "Bid"
+    | Side.Ask -> `String "Ask"
   ;;
 
-  let yojson_of_side = function
-    | Order.Bid -> `String "Bid"
-    | Order.Ask -> `String "Ask"
+  let side_of_json = function
+    | `String "Bid" -> Side.Bid
+    | `String "Ask" -> Side.Ask
+    | _ -> raise Invalid_side
   ;;
 
-  let assoc_field name fields =
-    try List.assoc name fields with
-    | Not_found -> raise InvalidOrderJson
-  ;;
-
-  let int_of_yojson = function
-    | `Int x -> x
-    | _ -> raise InvalidOrderIdJson
-  ;;
-
-  let float_of_yojson = function
-    | `Float x -> x
-    | _ -> raise InvalidOrderPriceJson
-  ;;
-
-  let order_of_yojson = function
-    | `Assoc fields ->
-      { Order.id = int_of_yojson (assoc_field "id" fields)
-      ; kind = kind_of_yojson (assoc_field "kind" fields)
-      ; side = side_of_yojson (assoc_field "side" fields)
-      ; price = float_of_yojson (assoc_field "price" fields)
-      ; quantity =
-          int_of_yojson (assoc_field "quantity" fields)
-      }
-    | _ -> raise InvalidOrderJson
-  ;;
-
-  let yojson_of_order (t : Order.t) =
+  let order_to_json t =
     `Assoc
-      [ "id", `Int t.id
-      ; "kind", yojson_of_kind t.kind
-      ; "side", yojson_of_side t.side
-      ; "price", `Float t.price
-      ; "quantity", `Int t.quantity
+      [ "id", `Int t.Order.id
+      ; "kind", kind_to_json t.Order.kind
+      ; "side", side_to_json t.Order.side
+      ; "price", `Int t.Order.price
+      ; "quantity", `Int t.Order.quantity
       ]
   ;;
 
-  let json_of_order (t : Order.t) =
-    Yojson.Safe.pretty_to_string (yojson_of_order t)
-  ;;
-
-  module OrderMap = Map.Make (Int)
-
-  let order_pair_of_yojson = function
-    | `List [ `Int k; v ] -> k, order_of_yojson v
-    | _ -> raise InvalidOrderPairJson
-  ;;
-
-  let order_pair_to_yojson (k, v) =
-    `List [ `Int k; yojson_of_order v ]
-  ;;
-
-  let orders_of_yojson = function
-    | `List lst ->
-      List.fold_left
-        (fun map entry ->
-          let k, v = order_pair_of_yojson entry in
-          OrderMap.add k v map)
-        OrderMap.empty
-        lst
-    | _ -> raise InvalidOrderMapJson
-  ;;
-
-  let orders_to_yojson orders =
-    `List
-      (OrderMap.fold
-         (fun k v acc -> order_pair_to_yojson (k, v) :: acc)
-         orders
-         [])
-  ;;
-
-  let level_of_yojson = function
-    | `Assoc fields ->
-      { Level.price =
-          float_of_yojson (assoc_field "price" fields)
-      ; quantity =
-          int_of_yojson (assoc_field "quantity" fields)
-      ; orders =
-          orders_of_yojson (assoc_field "orders" fields)
-      }
-    | _ -> raise InvalidLevelJson
-  ;;
-
-  let yojson_of_level (t : Level.t) =
-    `Assoc
-      [ "price", `Float t.price
-      ; "quantity", `Int t.quantity
-      ; "orders", orders_to_yojson t.orders
-      ]
-  ;;
-
-  let json_of_level (t : Level.t) =
-    Yojson.Safe.pretty_to_string (yojson_of_level t)
+  let order_of_json = function
+    | `Assoc
+        [ ("id", `Int id)
+        ; ("kind", kind_json)
+        ; ("side", side_json)
+        ; ("price", `Int price)
+        ; ("quantity", `Int quantity)
+        ] ->
+      let kind = kind_of_json kind_json in
+      let side = side_of_json side_json in
+      Order.{ id; kind; side; price; quantity }
+    | _ -> raise Invalid_order
   ;;
 end

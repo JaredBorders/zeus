@@ -1,5 +1,4 @@
 (library
  (public_name zeus)
  (name zeus)
- (preprocess
-  (pps ppx_yojson_conv)))
+ (libraries core yojson))
