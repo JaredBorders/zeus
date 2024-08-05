@@ -12,17 +12,17 @@ Manages individual orders with support for creating, filling, and checking the s
 
 ### Level Module
 
-Handles price levels, aggregating orders at the same price (or tick) and providing efficient access and ~modification~ operations.
+Handles price levels, aggregating orders at the same price (or tick) and providing efficient access and manipulation.
 
 ### Trade Module
 
-Represents trades between orders, ensuring accurate tracking and execution.
+Handles a trade consisting of two orders that can be processed by the order book, ensuring accurate tracking and execution.
 
 ### Orderbook Module
 
 Manages the entire order book, including placing, canceling, and executing orders. It maintains separate records for bids and asks, ensuring efficient order matching and book updates.
 
-## Benefits of Being Functional
+## λ Why Functional?
 
 -   **Maintainability**: Code is easier to understand and maintain due to clear separation of data and behavior.
 -   **Reliability**: Reduced side effects lead to fewer bugs and more predictable system behavior.
