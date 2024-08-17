@@ -2,7 +2,7 @@
 
 ## What is Zeus?
 
-Zeus is a limit order book (LOB) implemented in OCaml. It leverages the power of a functional design to create a safe and reliable system for managing an order book. It includes modules for managing orders, price levels, trades, and an order book. Each component is built with immutability in mind, ensuring that the system remains consistent and predictable under all circumstances.
+Zeus is a limit order book (LOB) implemented in OCaml 🐪
 
 ## Core Components
 
@@ -24,9 +24,7 @@ Manages the entire order book, including placing, canceling, and executing order
 
 ## λ Why Functional?
 
--   **Maintainability**: Code is easier to understand and maintain due to clear separation of data and behavior.
--   **Reliability**: Reduced side effects lead to fewer bugs and more predictable system behavior.
--   **Scalability**: Functional code scales well with increased complexity and concurrent operations.
+Side effects are bad 🙅‍♂️
 
 ## Getting Started
 
